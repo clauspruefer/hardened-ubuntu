@@ -91,3 +91,315 @@ To establish secure DNS infrastructure and prevent DNS-based attacks:
 - Route all DNS traffic to NextDNS DoH servers
 - Block unencrypted DNS queries to internal and external routers
 - Verify DoH requests are directed to correct IP addresses
+
+# Installation Instructions
+
+This section provides step-by-step instructions for installing and configuring the hardened Ubuntu 25.10 system.
+
+## Overview
+
+The installation process consists of three main scripts that must be executed in sequence:
+
+1. **installer-step1.sh** - Initial system hardening (no network required)
+2. **System reboot** - Required to apply kernel and boot configurations
+3. **installer-step2.sh** - Network-dependent security components (requires network)
+4. **DNS verification** - Validate DNS-over-HTTPS functionality
+5. **installer-step3.sh** - Final package installation and user configuration
+
+## Step 0: Configure System Parameters
+
+**IMPORTANT:** Before running any installer scripts, you must configure your system-specific parameters in `config.sh`.
+
+Edit the configuration file with your environment settings:
+
+```bash
+# Edit config.sh with your system configuration
+sudo vim config.sh
+```
+
+Configure the following parameters:
+
+```bash
+# Network interface configuration
+export NET_IF_NAME=enp2s0              # Your network interface name (find with: ip link)
+export NET_IF_MACADDRESS=12:34:56:78:9a:9b  # Your network interface MAC address
+export NET_IF_MTU=9000                  # Maximum Transmission Unit (typically 1500 or 9000 for jumbo frames)
+
+# NextDNS configuration (required for DNS-over-HTTPS)
+export NEXTDNS_ID="abcdef"              # Your NextDNS configuration ID
+export NEXTDNS_STAMP=""                 # Your NextDNS SDNS stamp (from NextDNS dashboard)
+
+# Kernel configuration
+export KERNEL_DOMAIN_NAME="domain.name" # Your domain name for kernel configuration
+
+# System users
+export USER_IDS="ubuntu"                # Space-separated list of user IDs to configure
+```
+
+**To find your network interface name:**
+```bash
+ip link show
+```
+
+**To find your network interface MAC address:**
+```bash
+ip link show <interface_name>
+```
+
+## Step 1: Initial System Hardening (No Network Required)
+
+The first installer script performs the initial hardening configuration. This script **must be executed without network access** to prevent potential security issues during configuration.
+
+**What it does:**
+- Patches Ubuntu mirror URLs to use HTTPS
+- Configures static NextDNS addresses in `/etc/hosts`
+- Sets up netplan network configuration
+- Removes unwanted packages (avahi, bluez, telemetry services, etc.)
+- Disables insecure system and D-Bus services
+- Blacklists unnecessary kernel modules
+- Configures system limits and sysctl parameters
+- Sets kernel command line parameters in GRUB
+
+**Execute the script:**
+
+```bash
+# Clone or download the repository
+git clone https://github.com/WEBcodeX1/hardened-ubuntu.git
+cd hardened-ubuntu
+
+# Make sure config.sh is properly configured (see Step 0)
+# Run the first installer script as root
+sudo ./installer-step1.sh
+```
+
+**After completion, reboot the system:**
+
+```bash
+sudo reboot
+```
+
+## Step 2: Install Security Components (Network Required)
+
+After rebooting, the second installer script must be executed. This script **requires network access** and will install base security requirements.
+
+**What it does:**
+- Updates and upgrades system packages
+- Installs USBGuard for USB attack protection
+- Installs dnscrypt-proxy for DNS-over-HTTPS
+- Installs libnss-resolve for command-line DNS resolution
+- Configures systemd-resolved to use local dnscrypt-proxy
+- Configures dnscrypt-proxy with your NextDNS settings
+- Disables and masks the dnscrypt-proxy-resolvconf service
+
+**Execute the script:**
+
+```bash
+cd hardened-ubuntu
+sudo ./installer-step2.sh
+```
+
+## Step 3: Verify DNS-over-HTTPS Configuration
+
+After installer-step2.sh completes, you **must verify** that DNS encryption is working correctly.
+
+**Check dnscrypt-proxy service status:**
+
+```bash
+systemctl status dnscrypt-proxy
+```
+
+The service should be **active (running)** and show no errors.
+
+**Verify DNS resolution is working:**
+
+```bash
+# Test DNS resolution
+nslookup github.com
+
+# Check that DNS queries are going through dnscrypt-proxy
+sudo journalctl -u dnscrypt-proxy -n 50
+```
+
+If the service is not running or shows errors, troubleshoot before proceeding to Step 4.
+
+## Step 4: Install Packages and User Configuration
+
+The final installer script installs additional packages and applies user-based security settings.
+
+**What it does:**
+- Updates and upgrades all system packages
+- Installs essential packages (aptitude, intel-microcode, vim, kate, xterm, foot)
+- Installs development tools (docker.io, build-essential, debhelper, pbuilder, devscripts)
+- Installs applications (GIMP, OpenSC, VLC)
+- Installs Firefox ESR from Mozilla repository (non-SNAP version)
+- Applies global hardened Firefox configuration
+- Removes SNAP desktop applications and icons
+- Enables custom systemd security service
+- Disables ubuntu-fan network service
+
+**Execute the script:**
+
+```bash
+cd hardened-ubuntu
+sudo ./installer-step3.sh
+```
+
+## Installation Complete
+
+After completing all steps, your Ubuntu 25.10 system is hardened and ready for use. The system includes:
+
+- Encrypted DNS traffic via DNS-over-HTTPS
+- Enhanced security configurations
+- Hardened kernel parameters
+- Removed telemetry and unnecessary services
+- USB attack protection
+- Firefox ESR with security-focused configuration
+
+# Automated USB Installation
+
+For automated deployments, you can integrate the hardening scripts into a USB installation medium using Ubuntu's autoinstall feature.
+
+## Autoinstall Configuration
+
+The repository includes a template autoinstall configuration at `/autoinstall/autoinstall.yaml`. This file can be customized and integrated into an Ubuntu 25.10 installation ISO.
+
+### Configuration File Structure
+
+```yaml
+autoinstall:
+  version: 1
+  timezone: "Europe/Berlin"
+  locale: "en_US.UTF-8"
+  keyboard:
+    layout: de
+    variant: ""
+    toggle: null
+  identity:
+    realname: 'User Name'
+    username: userid
+    password: '$y$j9T$u2.Sxog5EGXbH1sqVnrVD.$Qi76Enig/FpDS92jEhxsa6fLSZh4KwOMSEqfr8TH8L.'
+    hostname: ubuntu
+  storage:
+    layout:
+      name: direct
+  kernel-crash-dumps:
+    enabled: false
+  shutdown: poweroff
+```
+
+### Customizing Autoinstall Configuration
+
+1. **Edit the autoinstall.yaml file** with your specific settings:
+
+```bash
+vim autoinstall/autoinstall.yaml
+```
+
+2. **Customize the following parameters:**
+   - `timezone`: Your timezone (e.g., "America/New_York", "Europe/London")
+   - `locale`: Your system locale (e.g., "en_US.UTF-8", "de_DE.UTF-8")
+   - `keyboard.layout`: Your keyboard layout (e.g., "us", "de", "fr")
+   - `identity.realname`: User's full name
+   - `identity.username`: System username
+   - `identity.password`: Encrypted password (generate with: `mkpasswd -m yescrypt`)
+   - `identity.hostname`: System hostname
+   - `storage.layout`: Disk partitioning layout
+
+3. **Generate encrypted password:**
+
+```bash
+# Install mkpasswd if not available
+sudo apt-get install whois
+
+# Generate encrypted password
+mkpasswd -m yescrypt
+```
+
+### Creating Bootable USB Installation Medium
+
+1. **Download Ubuntu 25.10 Desktop ISO** from the official Ubuntu website.
+
+2. **Create the autoinstall ISO** by adding your customized autoinstall.yaml:
+
+```bash
+# Extract the ISO contents
+mkdir -p /tmp/ubuntu-iso
+sudo mount -o loop ubuntu-25.10-desktop-amd64.iso /tmp/ubuntu-iso
+mkdir -p /tmp/ubuntu-custom
+cp -rT /tmp/ubuntu-iso /tmp/ubuntu-custom
+
+# Add autoinstall configuration
+mkdir -p /tmp/ubuntu-custom/autoinstall
+cp autoinstall/autoinstall.yaml /tmp/ubuntu-custom/autoinstall/
+
+# Copy hardening scripts to the ISO
+mkdir -p /tmp/ubuntu-custom/hardening
+cp *.sh /tmp/ubuntu-custom/hardening/
+cp *.conf /tmp/ubuntu-custom/hardening/
+cp *.toml /tmp/ubuntu-custom/hardening/
+cp *.yaml /tmp/ubuntu-custom/hardening/
+cp *.js /tmp/ubuntu-custom/hardening/
+cp hosts /tmp/ubuntu-custom/hardening/
+cp nsswitch.conf /tmp/ubuntu-custom/hardening/
+
+# Create the custom ISO
+sudo apt-get install xorriso isolinux
+cd /tmp/ubuntu-custom
+sudo xorriso -as mkisofs -r -V "Ubuntu 25.10 Hardened" \
+  -o /tmp/ubuntu-25.10-hardened.iso \
+  -b isolinux/isolinux.bin -c isolinux/boot.cat \
+  -no-emul-boot -boot-load-size 4 -boot-info-table \
+  -eltorito-alt-boot -e boot/grub/efi.img \
+  -no-emul-boot -isohybrid-gpt-basdat .
+```
+
+3. **Write the ISO to USB** using tools like Rufus (Windows) or dd (Linux):
+
+**Using Rufus (Windows):**
+- Download Rufus from https://rufus.ie/
+- Select your USB drive
+- Select the custom ISO file
+- **Important:** Set Partition scheme to "GPT" for UEFI/Secure Boot
+- Click "Start"
+
+**Using dd (Linux):**
+```bash
+# Find your USB device
+lsblk
+
+# Write the ISO to USB (replace sdX with your USB device)
+sudo dd if=/tmp/ubuntu-25.10-hardened.iso of=/dev/sdX bs=4M status=progress oflag=sync
+```
+
+### Post-Installation Hardening
+
+After the automated installation completes:
+
+1. **Copy the hardening scripts from the USB or download from the repository:**
+
+```bash
+# If scripts are on the ISO
+sudo mount /dev/cdrom /mnt
+cp -r /mnt/hardening ~/hardened-ubuntu
+
+# Or clone from repository
+git clone https://github.com/WEBcodeX1/hardened-ubuntu.git
+cd hardened-ubuntu
+```
+
+2. **Follow the manual installation steps** starting from Step 0 (configure config.sh) through Step 4 to apply all hardening configurations.
+
+### Fully Automated Installation with Late Commands
+
+For a fully automated installation, you can add late-commands to the autoinstall.yaml to run the hardening scripts automatically:
+
+```yaml
+autoinstall:
+  version: 1
+  # ... other configuration ...
+  late-commands:
+    - curtin in-target -- bash -c "cd /tmp/hardening && ./installer-step1.sh"
+    # Note: installer-step2.sh and installer-step3.sh require manual execution after reboot
+```
+
+**Important:** Due to the reboot requirement between installation steps and the need for DNS verification, it is recommended to run installer-step2.sh and installer-step3.sh manually after the initial automated installation and reboot.
