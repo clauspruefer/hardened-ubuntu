@@ -334,13 +334,28 @@ cp autoinstall/autoinstall.yaml /tmp/ubuntu-custom/autoinstall/
 
 # Copy hardening scripts to the ISO
 mkdir -p /tmp/ubuntu-custom/hardening
-cp *.sh /tmp/ubuntu-custom/hardening/
-cp *.conf /tmp/ubuntu-custom/hardening/
-cp *.toml /tmp/ubuntu-custom/hardening/
-cp *.yaml /tmp/ubuntu-custom/hardening/
-cp *.js /tmp/ubuntu-custom/hardening/
-cp hosts /tmp/ubuntu-custom/hardening/
-cp nsswitch.conf /tmp/ubuntu-custom/hardening/
+
+# Copy installer scripts
+cp installer-step1.sh installer-step2.sh installer-step3.sh /tmp/ubuntu-custom/hardening/
+cp config.sh /tmp/ubuntu-custom/hardening/
+
+# Copy configuration scripts
+cp apt-install-cmds.sh apt-preinstall-cmds.sh apt-remove-cmds.sh /tmp/ubuntu-custom/hardening/
+cp disable-dbus-services.sh disable-services.sh disable-user-services.sh /tmp/ubuntu-custom/hardening/
+cp enable-systemd-custom-security.sh install-non-snapd-firefox.sh /tmp/ubuntu-custom/hardening/
+cp modules-blacklist.sh patch-hosts.sh patch-ubuntu-mirrors-https.sh /tmp/ubuntu-custom/hardening/
+cp set-custom-security.sh set-grub-kernel-cmdline.sh set-limits.sh /tmp/ubuntu-custom/hardening/
+cp set-sysctl.sh setup-netplan.sh /tmp/ubuntu-custom/hardening/
+
+# Copy configuration files
+cp limits.conf modules-blacklist.conf nsswitch.conf resolved.conf /tmp/ubuntu-custom/hardening/
+cp dnscrypt-proxy.toml firefox-global.js hosts /tmp/ubuntu-custom/hardening/
+cp sysctl-10-domainname.conf sysctl-10-net.conf sysctl-20-misc.conf /tmp/ubuntu-custom/hardening/
+cp sysctl-55-kernel-hardening.conf sysctl-99-coredump.conf /tmp/ubuntu-custom/hardening/
+cp systemd-custom-security.service /tmp/ubuntu-custom/hardening/
+
+# Copy netplan templates
+cp 01-networkd-all.yaml 02-net-if-config.yaml /tmp/ubuntu-custom/hardening/
 
 # Create the custom ISO
 sudo apt-get install xorriso isolinux
@@ -375,19 +390,26 @@ sudo dd if=/tmp/ubuntu-25.10-hardened.iso of=/dev/sdX bs=4M status=progress ofla
 
 After the automated installation completes:
 
-1. **Copy the hardening scripts from the USB or download from the repository:**
+1. **If using late-commands automation**, the hardening scripts are already in `/opt/hardening/`:
+
+```bash
+cd /opt/hardening
+```
+
+2. **If not using late-commands**, copy the hardening scripts from the USB or download from the repository:
 
 ```bash
 # If scripts are on the ISO
 sudo mount /dev/cdrom /mnt
 cp -r /mnt/hardening ~/hardened-ubuntu
+cd ~/hardened-ubuntu
 
 # Or clone from repository
 git clone https://github.com/WEBcodeX1/hardened-ubuntu.git
 cd hardened-ubuntu
 ```
 
-2. **Follow the manual installation steps** starting from Step 0 (configure config.sh) through Step 4 to apply all hardening configurations.
+3. **Follow the manual installation steps** starting from Step 0 (configure config.sh) through Step 4 to apply all hardening configurations.
 
 ### Fully Automated Installation with Late Commands
 
@@ -398,8 +420,12 @@ autoinstall:
   version: 1
   # ... other configuration ...
   late-commands:
-    - curtin in-target -- bash -c "cd /tmp/hardening && ./installer-step1.sh"
+    # Copy hardening scripts from ISO to target system
+    - curtin in-target -- mkdir -p /opt/hardening
+    - curtin in-target -- cp -r /cdrom/hardening/* /opt/hardening/
+    # Run first installer step
+    - curtin in-target -- bash -c "cd /opt/hardening && ./installer-step1.sh"
     # Note: installer-step2.sh and installer-step3.sh require manual execution after reboot
 ```
 
-**Important:** Due to the reboot requirement between installation steps and the need for DNS verification, it is recommended to run installer-step2.sh and installer-step3.sh manually after the initial automated installation and reboot.
+**Important:** Due to the reboot requirement between installation steps and the need for DNS verification, it is recommended to run installer-step2.sh and installer-step3.sh manually after the initial automated installation and reboot. The hardening scripts will be available in `/opt/hardening/` on the installed system.
