@@ -8,6 +8,9 @@ Experience has demonstrated that while established Linux distributions like Ubun
 
 This repository addresses these shortcomings by providing a comprehensive hardening solution for Ubuntu 25.10 workstation systems, enabling production-ready deployment within minutes.
 
+**Additional Resources:**
+- For detailed information about Hardened Ubuntu and NextDNS security configuration, see: [Hardened Ubuntu NextDNS Security Guide](https://www.der-it-pruefer.de/security/Hardened-Ubuntu-NextDNS-Security)
+
 ## Ubuntu 25.10 Key Features
 
 - XServer-less, 100% Wayland architecture (GNOME 49)
@@ -77,9 +80,6 @@ NextDNS represents a modern DNS security solution designed with privacy and secu
 - Community-maintained security templates
 
 The configuration prioritizes DNS-over-HTTPS (DoH) for all DNS queries.
-
-**Additional Resources:**
-- For detailed information about Hardened Ubuntu and NextDNS security configuration, see: [Hardened Ubuntu NextDNS Security Guide](https://www.der-it-pruefer.de/security/Hardened-Ubuntu-NextDNS-Security)
 
 ## Requirements
 
