@@ -117,26 +117,26 @@ Edit the configuration file with your environment settings:
 
 ```bash
 # edit config.sh with your system configuration
-sudo vim config.sh
+vim config.sh
 ```
 
 Configure the following parameters:
 
 ```bash
 # network interface configuration
-export NET_IF_NAME=enp2s0              # your network interface name (find with: ip link)
-export NET_IF_MACADDRESS=12:34:56:78:9a:9b  # your network interface mac address
-export NET_IF_MTU=9000                  # maximum transmission unit (typically 1500 or 9000 for jumbo frames)
+export NET_IF_NAME=enp2s0                  # NIC name
+export NET_IF_MACADDRESS=12:34:56:78:9a:9b # interface MAC
+export NET_IF_MTU=9000                     # MTU size
 
-# nextdns configuration (required for dns-over-https)
-export NEXTDNS_ID="abcdef"              # your nextdns configuration id
-export NEXTDNS_STAMP=""                 # your nextdns sdns stamp (from nextdns dashboard)
+# NextDNS configuration
+export NEXTDNS_ID="abcdef"                 # NextDNS configuration ID
+export NEXTDNS_STAMP=""                    # SDNS stamp
 
 # kernel configuration
-export KERNEL_DOMAIN_NAME="domain.name" # your domain name for kernel configuration
+export KERNEL_DOMAIN_NAME="domain.name"    # kernel domain name
 
 # system users
-export USER_IDS="ubuntu"                # space-separated list of user ids to configure
+export USER_IDS="user1 user2"              # space-separated user IDs to process
 ```
 
 **To find your network interface name:**
