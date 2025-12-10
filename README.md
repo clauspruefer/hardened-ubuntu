@@ -30,7 +30,8 @@ Ubuntu 25.10 ships with several security-relevant features enabled by default th
 - NetworkManager-controlled networking (non-netplan)
 - HTTP-based mirror URLs (non-HTTPS)
 
-**Warning:** Automated update processes combined with DNS poisoning attacks present severe security risks.
+> [!WARNING]
+> Automated update processes combined with DNS poisoning attacks present severe security risks.
 
 # 2. Hardened Ubuntu 25.10 (Desktop)
 
