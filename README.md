@@ -79,7 +79,7 @@ NextDNS represents a modern DNS security solution designed with privacy and secu
 The configuration prioritizes DNS-over-HTTPS (DoH) for all DNS queries.
 
 **Additional Resources:**
-- For detailed information about Hardened Ubuntu and NextDNS security configuration, see: https://www.der-it-pruefer.de/security/Hardened-Ubuntu-NextDNS-Security
+- For detailed information about Hardened Ubuntu and NextDNS security configuration, see: [Hardened Ubuntu NextDNS Security Guide](https://www.der-it-pruefer.de/security/Hardened-Ubuntu-NextDNS-Security)
 
 ## Requirements
 
