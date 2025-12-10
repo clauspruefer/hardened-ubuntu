@@ -1,4 +1,4 @@
-# Abstract
+# 1. Abstract
 
 Transmitting DNS traffic unencrypted over the internet represents a significant security vulnerability. Additionally, modern operating systems and internet browsers have become increasingly bloated with unnecessary and potentially insecure components.
 
@@ -11,14 +11,14 @@ This repository addresses these shortcomings by providing a comprehensive harden
 **Additional Resources:**
 - For detailed information about Hardened Ubuntu and NextDNS security configuration, see: [Hardened Ubuntu NextDNS Security Guide](https://www.der-it-pruefer.de/security/Hardened-Ubuntu-NextDNS-Security)
 
-## Ubuntu 25.10 Key Features
+## 1.1. Ubuntu 25.10 Key Features
 
 - XServer-less, 100% Wayland architecture (GNOME 49)
 - Enhanced service dependency management and customization (systemd)
 - Significantly improved YAML-based auto-installation
 - Hardware-based hard drive encryption using TPM 2.0+ (experimental)
 
-## Security Concerns in Default Ubuntu 25.10
+## 1.2. Security Concerns in Default Ubuntu 25.10
 
 Ubuntu 25.10 ships with several security-relevant features enabled by default that provide insufficient administrative control:
 
@@ -32,13 +32,13 @@ Ubuntu 25.10 ships with several security-relevant features enabled by default th
 
 **Warning:** Automated update processes combined with DNS poisoning attacks present severe security risks.
 
-# Hardened Ubuntu 25.10 (Desktop)
+# 2. Hardened Ubuntu 25.10 (Desktop)
 
 This repository provides comprehensive hardening configurations for default Ubuntu 25.10 Desktop installations, specifically designed for software development and workstation environments.
 
 The solution aims to achieve an optimal balance between usability and security.
 
-## Security Features
+## 2.1. Security Features
 
 - Complete DNS traffic encryption using DNS-over-HTTPS (DoH), including shell traffic
 - Strict IOMMU hardening
@@ -56,14 +56,14 @@ The solution aims to achieve an optimal balance between usability and security.
 - Disabled Thunderbolt
 - Disabled Internet Protocol version 6 (IPv6)
 
-## Preserved Components
+## 2.2. Preserved Components
 
 - systemd
 - CUPS (printing system)
 
 **Note:** For systemd-free Linux distributions, consider Devuan (https://www.devuan.org/).
 
-## Prerequisites
+## 2.3. Prerequisites
 
 - Ubuntu 25.10 Desktop ISO image
 - USB bootable installer (UNetbootin or Rufus)
@@ -71,7 +71,7 @@ The solution aims to achieve an optimal balance between usability and security.
 - Optional: EFI partition encryption (Ubuntu 25.10 supports TPM 2.0)
 - Local DHCP configuration with NTP option (DHCP option 42)
 
-# Secure DNS Configuration with NextDNS
+# 3. Secure DNS Configuration with NextDNS
 
 NextDNS represents a modern DNS security solution designed with privacy and security as primary considerations. It provides comprehensive DNS security with advanced filtering capabilities, including:
 
@@ -81,13 +81,13 @@ NextDNS represents a modern DNS security solution designed with privacy and secu
 
 The configuration prioritizes DNS-over-HTTPS (DoH) for all DNS queries.
 
-## Requirements
+## 3.1. Requirements
 
 - Active NextDNS account
 - Secure SDNS stamp (available from NextDNS account dashboard)
 - SDNS stamp configured in dnscrypt-proxy.toml template
 
-## Infrastructure Configuration
+## 3.2. Infrastructure Configuration
 
 To establish secure DNS infrastructure and prevent DNS-based attacks:
 
@@ -95,11 +95,11 @@ To establish secure DNS infrastructure and prevent DNS-based attacks:
 - Block unencrypted DNS queries to internal and external routers
 - Verify DoH requests are directed to correct IP addresses
 
-# Installation Instructions
+# 4. Installation Instructions
 
 This section provides step-by-step instructions for installing and configuring the hardened Ubuntu 25.10 system.
 
-## Overview
+## 4.1. Overview
 
 The installation process consists of three main scripts that must be executed in sequence:
 
@@ -109,7 +109,7 @@ The installation process consists of three main scripts that must be executed in
 4. **DNS verification** - Validate DNS-over-HTTPS functionality
 5. **installer-step3.sh** - Final package installation and user configuration
 
-## Step 0: Configure System Parameters
+## 4.2. Step 0: Configure System Parameters
 
 **IMPORTANT:** Before running any installer scripts, you must configure your system-specific parameters in `config.sh`.
 
@@ -149,7 +149,7 @@ ip link show
 ip link show <interface_name>
 ```
 
-## Step 1: Initial System Hardening (No Network Required)
+## 4.3. Step 1: Initial System Hardening (No Network Required)
 
 The first installer script performs the initial hardening configuration. This script **must be executed without network access** to prevent potential security issues during configuration.
 
@@ -181,7 +181,7 @@ sudo ./installer-step1.sh
 sudo reboot
 ```
 
-## Step 2: Install Security Components (Network Required)
+## 4.4. Step 2: Install Security Components (Network Required)
 
 After rebooting, the second installer script must be executed. This script **requires network access** and will install base security requirements.
 
@@ -201,7 +201,7 @@ cd hardened-ubuntu
 sudo ./installer-step2.sh
 ```
 
-## Step 3: Verify DNS-over-HTTPS Configuration
+## 4.5. Step 3: Verify DNS-over-HTTPS Configuration
 
 After installer-step2.sh completes, you **must verify** that DNS encryption is working correctly.
 
@@ -225,7 +225,7 @@ sudo journalctl -u dnscrypt-proxy -n 50
 
 If the service is not running or shows errors, troubleshoot before proceeding to Step 4.
 
-## Step 4: Install Packages and User Configuration
+## 4.6. Step 4: Install Packages and User Configuration
 
 The final installer script installs additional packages and applies user-based security settings.
 
@@ -247,7 +247,7 @@ cd hardened-ubuntu
 sudo ./installer-step3.sh
 ```
 
-## Installation Complete
+## 4.7. Installation Complete
 
 After completing all steps, your Ubuntu 25.10 system is hardened and ready for use. The system includes:
 
@@ -258,15 +258,15 @@ After completing all steps, your Ubuntu 25.10 system is hardened and ready for u
 - USB attack protection
 - Firefox ESR with security-focused configuration
 
-# Automated USB Installation
+# 5. Automated USB Installation
 
 For automated deployments, you can integrate the hardening scripts into a USB installation medium using Ubuntu's autoinstall feature.
 
-## Autoinstall Configuration
+## 5.1. Autoinstall Configuration
 
 The repository includes a template autoinstall configuration at `/autoinstall/autoinstall.yaml`. This file can be customized and integrated into an Ubuntu 25.10 installation ISO.
 
-### Configuration File Structure
+### 5.1.1. Configuration File Structure
 
 ```yaml
 autoinstall:
@@ -290,7 +290,7 @@ autoinstall:
   shutdown: poweroff
 ```
 
-### Customizing Autoinstall Configuration
+### 5.1.2. Customizing Autoinstall Configuration
 
 1. **Edit the autoinstall.yaml file** with your specific settings:
 
@@ -318,7 +318,7 @@ sudo apt-get install whois
 mkpasswd -m yescrypt
 ```
 
-### Creating Bootable USB Installation Medium
+## 5.2. Creating Bootable USB Installation Medium
 
 1. **Download Ubuntu 25.10 Desktop ISO** from the official Ubuntu website.
 
@@ -389,7 +389,7 @@ lsblk
 sudo dd if=/tmp/ubuntu-25.10-hardened.iso of=/dev/sdX bs=4M status=progress oflag=sync
 ```
 
-### Post-Installation Hardening
+## 5.3. Post-Installation Hardening
 
 After the automated installation completes:
 
@@ -414,7 +414,7 @@ cd hardened-ubuntu
 
 3. **Follow the manual installation steps** starting from Step 0 (configure config.sh) through Step 4 to apply all hardening configurations.
 
-### Fully Automated Installation with Late Commands
+## 5.4. Fully Automated Installation with Late Commands
 
 For a fully automated installation, you can add late-commands to the autoinstall.yaml to run the hardening scripts automatically:
 
