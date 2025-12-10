@@ -116,27 +116,27 @@ The installation process consists of three main scripts that must be executed in
 Edit the configuration file with your environment settings:
 
 ```bash
-# Edit config.sh with your system configuration
+# edit config.sh with your system configuration
 sudo vim config.sh
 ```
 
 Configure the following parameters:
 
 ```bash
-# Network interface configuration
-export NET_IF_NAME=enp2s0              # Your network interface name (find with: ip link)
-export NET_IF_MACADDRESS=12:34:56:78:9a:9b  # Your network interface MAC address
-export NET_IF_MTU=9000                  # Maximum Transmission Unit (typically 1500 or 9000 for jumbo frames)
+# network interface configuration
+export NET_IF_NAME=enp2s0              # your network interface name (find with: ip link)
+export NET_IF_MACADDRESS=12:34:56:78:9a:9b  # your network interface mac address
+export NET_IF_MTU=9000                  # maximum transmission unit (typically 1500 or 9000 for jumbo frames)
 
-# NextDNS configuration (required for DNS-over-HTTPS)
-export NEXTDNS_ID="abcdef"              # Your NextDNS configuration ID
-export NEXTDNS_STAMP=""                 # Your NextDNS SDNS stamp (from NextDNS dashboard)
+# nextdns configuration (required for dns-over-https)
+export NEXTDNS_ID="abcdef"              # your nextdns configuration id
+export NEXTDNS_STAMP=""                 # your nextdns sdns stamp (from nextdns dashboard)
 
-# Kernel configuration
-export KERNEL_DOMAIN_NAME="domain.name" # Your domain name for kernel configuration
+# kernel configuration
+export KERNEL_DOMAIN_NAME="domain.name" # your domain name for kernel configuration
 
-# System users
-export USER_IDS="ubuntu"                # Space-separated list of user IDs to configure
+# system users
+export USER_IDS="ubuntu"                # space-separated list of user ids to configure
 ```
 
 **To find your network interface name:**
@@ -166,12 +166,12 @@ The first installer script performs the initial hardening configuration. This sc
 **Execute the script:**
 
 ```bash
-# Clone or download the repository
+# clone or download the repository
 git clone https://github.com/WEBcodeX1/hardened-ubuntu.git
 cd hardened-ubuntu
 
-# Make sure config.sh is properly configured (see Step 0)
-# Run the first installer script as root
+# make sure config.sh is properly configured (see step 0)
+# run the first installer script as root
 sudo ./installer-step1.sh
 ```
 
@@ -216,10 +216,10 @@ The service should be **active (running)** and show no errors.
 **Verify DNS resolution is working:**
 
 ```bash
-# Test DNS resolution
+# test dns resolution
 nslookup github.com
 
-# Check that DNS queries are going through dnscrypt-proxy
+# check that dns queries are going through dnscrypt-proxy
 sudo journalctl -u dnscrypt-proxy -n 50
 ```
 
@@ -311,10 +311,10 @@ vim autoinstall/autoinstall.yaml
 3. **Generate encrypted password:**
 
 ```bash
-# Install mkpasswd if not available
+# install mkpasswd if not available
 sudo apt-get install whois
 
-# Generate encrypted password
+# generate encrypted password
 mkpasswd -m yescrypt
 ```
 
@@ -325,24 +325,24 @@ mkpasswd -m yescrypt
 2. **Create the autoinstall ISO** by adding your customized autoinstall.yaml:
 
 ```bash
-# Extract the ISO contents
+# extract the iso contents
 mkdir -p /tmp/ubuntu-iso
 sudo mount -o loop ubuntu-25.10-desktop-amd64.iso /tmp/ubuntu-iso
 mkdir -p /tmp/ubuntu-custom
 cp -rT /tmp/ubuntu-iso /tmp/ubuntu-custom
 
-# Add autoinstall configuration
+# add autoinstall configuration
 mkdir -p /tmp/ubuntu-custom/autoinstall
 cp autoinstall/autoinstall.yaml /tmp/ubuntu-custom/autoinstall/
 
-# Copy hardening scripts to the ISO
+# copy hardening scripts to the iso
 mkdir -p /tmp/ubuntu-custom/hardening
 
-# Copy installer scripts
+# copy installer scripts
 cp installer-step1.sh installer-step2.sh installer-step3.sh /tmp/ubuntu-custom/hardening/
 cp config.sh /tmp/ubuntu-custom/hardening/
 
-# Copy configuration scripts
+# copy configuration scripts
 cp apt-install-cmds.sh apt-preinstall-cmds.sh apt-remove-cmds.sh /tmp/ubuntu-custom/hardening/
 cp disable-dbus-services.sh disable-services.sh disable-user-services.sh /tmp/ubuntu-custom/hardening/
 cp enable-systemd-custom-security.sh install-non-snapd-firefox.sh /tmp/ubuntu-custom/hardening/
@@ -350,17 +350,17 @@ cp modules-blacklist.sh patch-hosts.sh patch-ubuntu-mirrors-https.sh /tmp/ubuntu
 cp set-custom-security.sh set-grub-kernel-cmdline.sh set-limits.sh /tmp/ubuntu-custom/hardening/
 cp set-sysctl.sh setup-netplan.sh /tmp/ubuntu-custom/hardening/
 
-# Copy configuration files
+# copy configuration files
 cp limits.conf modules-blacklist.conf nsswitch.conf resolved.conf /tmp/ubuntu-custom/hardening/
 cp dnscrypt-proxy.toml firefox-global.js hosts /tmp/ubuntu-custom/hardening/
 cp sysctl-10-domainname.conf sysctl-10-net.conf sysctl-20-misc.conf /tmp/ubuntu-custom/hardening/
 cp sysctl-55-kernel-hardening.conf sysctl-99-coredump.conf /tmp/ubuntu-custom/hardening/
 cp systemd-custom-security.service /tmp/ubuntu-custom/hardening/
 
-# Copy netplan templates
+# copy netplan templates
 cp 01-networkd-all.yaml 02-net-if-config.yaml /tmp/ubuntu-custom/hardening/
 
-# Create the custom ISO
+# create the custom iso
 sudo apt-get install xorriso isolinux
 cd /tmp/ubuntu-custom
 sudo xorriso -as mkisofs -r -V "Ubuntu 25.10 Hardened" \
@@ -382,10 +382,10 @@ sudo xorriso -as mkisofs -r -V "Ubuntu 25.10 Hardened" \
 
 **Using dd (Linux):**
 ```bash
-# Find your USB device
+# find your usb device
 lsblk
 
-# Write the ISO to USB (replace sdX with your USB device)
+# write the iso to usb (replace sdx with your usb device)
 sudo dd if=/tmp/ubuntu-25.10-hardened.iso of=/dev/sdX bs=4M status=progress oflag=sync
 ```
 
@@ -402,12 +402,12 @@ cd /opt/hardening
 2. **If not using late-commands**, copy the hardening scripts from the USB or download from the repository:
 
 ```bash
-# If scripts are on the ISO
+# if scripts are on the iso
 sudo mount /dev/cdrom /mnt
 cp -r /mnt/hardening ~/hardened-ubuntu
 cd ~/hardened-ubuntu
 
-# Or clone from repository
+# or clone from repository
 git clone https://github.com/WEBcodeX1/hardened-ubuntu.git
 cd hardened-ubuntu
 ```
@@ -423,12 +423,12 @@ autoinstall:
   version: 1
   # ... other configuration ...
   late-commands:
-    # Copy hardening scripts from ISO to target system
+    # copy hardening scripts from iso to target system
     - curtin in-target -- mkdir -p /opt/hardening
     - curtin in-target -- cp -r /cdrom/hardening/* /opt/hardening/
-    # Run first installer step
+    # run first installer step
     - curtin in-target -- bash -c "cd /opt/hardening && ./installer-step1.sh"
-    # Note: installer-step2.sh and installer-step3.sh require manual execution after reboot
+    # note: installer-step2.sh and installer-step3.sh require manual execution after reboot
 ```
 
 **Important:** Due to the reboot requirement between installation steps and the need for DNS verification, it is recommended to run installer-step2.sh and installer-step3.sh manually after the initial automated installation and reboot. The hardening scripts will be available in `/opt/hardening/` on the installed system.
