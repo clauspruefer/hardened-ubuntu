@@ -60,10 +60,11 @@ systemctl mask --user launchpadlib-cache-clean.timer
 # remove snapd desktop apps / icons
 rm /var/lib/snapd/desktop/applications/*
 
-# process all configured system users
+# process user based disable scripts
 for user_id in ${sys_users}; do
-    cp -Ra ./disable-user-services.sh /home/${user_id}/
-    chown ${user_id}:${user_id} /home/${user_id}/disable-user-services.sh
-    su -c "~/disable-user-services.sh" - ${user_id}
-    rm /home/${user_id}/disable-user-services.sh
+    mkdir -p /home/${user_id}/autoinstall-scripts
+    chown ${user_id}:${user_id} /home/${user_id}/autoinstall-scripts
+    cp -Ra ./disable-user-services.sh ./user-autostart.tpl /home/${user_id}/autoinstall-scripts/
+    chown ${user_id}:${user_id} /home/${user_id}/autoinstall-scripts/*
+    su -c "~/autoinstall-scripts/disable-user-services.sh" - ${user_id}
 done

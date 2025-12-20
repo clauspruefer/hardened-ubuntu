@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # make xdg autostart dir
-mkdir ~/.config/autostart
+mkdir -p ~/.config/autostart
 
 # copy .desktop files
 cp /etc/xdg/autostart/geoclue-demo-agent.desktop ~/.config/autostart/
@@ -26,5 +26,12 @@ echo "Hidden=true" >> ~/.config/autostart/ubuntu-report-on-upgrade.desktop
 echo "Hidden=true" >> ~/.config/autostart/update-notifier.desktop
 
 # disable gnome extensions
-gnome-extensions disable ding@rastersoft.com
-gnome-extensions disable snapd-prompting@canonical.com
+desktop_file="$HOME/.config/autostart/disable-gnome-extension-ding.desktop"
+cp user-autostart.tpl ${desktop_file}
+sed -i "s/\[GNOME_EXTENSION_CMD\]/gnome-extensions disable ding@rastersoft.com/g" ${desktop_file}
+sed -i "s/\[GNOME_EXTENSION_ID\]/DING/g" ${desktop_file}
+
+desktop_file="$HOME/.config/autostart/disable-gnome-extension-snapd.desktop"
+cp user-autostart.tpl ${desktop_file}
+sed -i "s/\[GNOME_EXTENSION_CMD\]/gnome-extensions disable snapd-prompting@canonical.com/g" ${desktop_file}
+sed -i "s/\[GNOME_EXTENSION_ID\]/snapd prompting/g" ${desktop_file}
