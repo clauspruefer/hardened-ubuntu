@@ -1,9 +1,9 @@
-# Grub Remarks (Autoinstall ISO)
+# GRUB Remarks (Autoinstall ISO)
 
-On the autoinstall iso (usb-stick) **one** autoinstall grub entry with modified kernel command line
+On the autoinstall iso (usb-stick) **one** autoinstall GRUB entry with modified kernel command line
 must be **added** so autoinstall will be triggered automatically.
 
-## 1. Default Grub Config
+## 1. Default GRUB Config
 
 The following config is the default config located under `/boot/grub/grub.cfg`.
 
@@ -40,7 +40,7 @@ menuentry 'Test memory' {
 fi
 ```
 
-## 2. Modify Grub Config
+## 2. Modify GRUB Config
 
 Add the following menuentry **before** the first one (it will be booted automatically after
 the timeout has been reached).
