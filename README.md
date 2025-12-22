@@ -115,7 +115,6 @@ The configuration prioritizes DNS-over-HTTPS (DoH) for all DNS queries.
 
 - Active NextDNS account
 - Secure SDNS stamp (available from NextDNS account dashboard)
-- SDNS stamp configured in dnscrypt-proxy.toml template
 
 ## 3.2. Infrastructure Configuration
 
