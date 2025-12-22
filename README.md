@@ -200,7 +200,7 @@ The first installer script performs the initial hardening configuration. This sc
 git clone https://github.com/WEBcodeX1/hardened-ubuntu.git
 cd hardened-ubuntu
 
-# make sure config.sh is properly configured (see step 0)
+# make sure config.sh is properly configured (see chapter 4.2.)
 # run the first installer script as root
 sudo ./installer-step1.sh
 ```
@@ -253,7 +253,7 @@ nslookup github.com
 sudo journalctl -u dnscrypt-proxy -n 50
 ```
 
-If the service is not running or shows errors, troubleshoot before proceeding to Step 4.
+If the service is not running or shows errors, troubleshoot before proceeding to the next step.
 
 ## 4.6. Install Packages and User Configuration
 
@@ -420,7 +420,7 @@ git clone https://github.com/WEBcodeX1/hardened-ubuntu.git
 cd hardened-ubuntu
 ```
 
-3. **Follow the manual installation steps** starting from Step 0 (configure config.sh) through Step 4 to apply all hardening configurations.
+3. **Follow the manual installation steps** starting from chapter 4.2. (edit config.sh) through chapter 4.6. to apply all hardening configurations.
 
 ## 5.4. Fully Automated Installation with Late Commands
 
