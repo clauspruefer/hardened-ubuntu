@@ -10,6 +10,7 @@ This repository addresses these shortcomings by providing a comprehensive harden
 
 **Additional Resources:**
 - For detailed information about Hardened Ubuntu and NextDNS security configuration, see: [Hardened Ubuntu NextDNS Security Guide](https://www.der-it-pruefer.de/security/Hardened-Ubuntu-NextDNS-Security)
+- Download autointall-ready ISO at [https://download.webcodex.de/iso/ubuntu-25.10-hardened.iso](https://download.webcodex.de/iso/ubuntu-25.10-hardened.iso)
 
 ## Table of Contents
 
