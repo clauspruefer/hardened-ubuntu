@@ -371,7 +371,6 @@ cp *.sh *.conf *.toml *.yaml *.js /tmp/ubuntu-custom/hardening/
 sudo apt-get install xorriso
 
 # create custom (hybrid) ISO
-cd /tmp/ubuntu-custom
 sudo xorriso \
   -as mkisofs \
   -V "Ubuntu 25.10 Hardened" \
@@ -395,7 +394,7 @@ sudo xorriso \
   -no-emul-boot \
   -boot-load-size 10256 \
   -o /tmp/ubuntu-25.10-hardened.iso \
-  .
+  /tmp/ubuntu-custom/
 ```
 
 3. **Write the ISO to USB** using tools like Rufus (Windows) or dd (Linux):
